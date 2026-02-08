@@ -1,2 +1,52 @@
+# === ダウンロード元データ ===
 *.pdf
 *.txt
+*.xlsx
+*.xls
+*.csv
+*.zip
+
+# === EDINET API ===
+# APIキーが含まれる可能性のあるファイル
+.env
+.env.*
+*.env
+edinet_key.txt
+
+# === 認証・秘密情報 ===
+*.pem
+*.key
+*.secret
+credentials.*
+secrets.*
+token.*
+api_key*
+
+# === 抽出データの一時ファイル ===
+**/data/pdf/
+**/data/csv/
+**/data/xbrl/
+temp/
+temp_*/
+tmp/
+
+# === OS・エディタ ===
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+
+# === Python（スクリプト実行時） ===
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# === Jekyll ビルド成果物 ===
+_site/
+.jekyll-cache/
+.sass-cache/
+.jekyll-metadata
+Gemfile.lock
