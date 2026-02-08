@@ -15,7 +15,7 @@ description: EDINET APIから有価証券報告書・決算短信をダウンロ
 - `.env` ファイルに `EDINET_API_KEY=キー` の形式で設定
 - 未設定の場合は [edinet-api-setup.md](../../../docs/edinet-api-setup.md) を参照して設定を案内する
 - **重要**: APIキーを直接 curl コマンドに埋め込まない（会話ログに露出するため）
-- `scripts/edinet_api.py` 経由で API 呼び出しを行う
+- `corporate-reports` CLI 経由で API 呼び出しを行う
 
 ---
 
@@ -35,11 +35,11 @@ description: EDINET APIから有価証券報告書・決算短信をダウンロ
 
 ### 2. docID の検索
 
-Python スクリプト `scripts/edinet_api.py` で対象企業の開示書類を検索する。
+`corporate-reports` CLI で対象企業の開示書類を検索する。
 
 **基本コマンド:**
 ```bash
-python scripts/edinet_api.py search \
+uv run corporate-reports edinet search \
   --date 提出日 \
   --sec-code 証券コード \
   [--ordinance-code 府令コード] \
@@ -93,7 +93,7 @@ python scripts/edinet_api.py search \
 # 例: 12月決算企業の有報を2025年3月中に検索
 for day in $(seq 1 31); do
   d=$(printf "2025-03-%02d" $day)
-  result=$(python scripts/edinet_api.py search \
+  result=$(uv run corporate-reports edinet search \
     --date "$d" \
     --sec-code 5819 \
     --ordinance-code 010 \
@@ -119,7 +119,7 @@ done
 
 **基本コマンド:**
 ```bash
-python scripts/edinet_api.py download \
+uv run corporate-reports edinet download \
   --doc-id {docID} \
   --type {type} \
   --output {保存先パス}
@@ -137,21 +137,21 @@ python scripts/edinet_api.py download \
 **実行例:**
 ```bash
 # PDF取得
-python scripts/edinet_api.py download \
+uv run corporate-reports edinet download \
   --doc-id S100XXXX \
   --type 2 \
   --output temp/doc.zip
 unzip temp/doc.zip -d temp/ && mv temp/*.pdf {保存先}
 
 # CSV取得（構造化データ）
-python scripts/edinet_api.py download \
+uv run corporate-reports edinet download \
   --doc-id S100XXXX \
   --type 5 \
   --output temp/doc_csv.zip
 unzip temp/doc_csv.zip -d {保存先}/csv/
 
 # XBRL一式取得
-python scripts/edinet_api.py download \
+uv run corporate-reports edinet download \
   --doc-id S100XXXX \
   --type 1 \
   --output temp/doc_xbrl.zip
@@ -184,7 +184,7 @@ unzip temp/doc_xbrl.zip -d {保存先}/xbrl/
 
 ### 7. 注意点
 
-- **APIキーの安全性**: `scripts/edinet_api.py` を使用することでAPIキーが会話ログに露出しない
+- **APIキーの安全性**: `corporate-reports` CLI を使用することでAPIキーが会話ログに露出しない
 - **レートリミット**: スクリプトが自動的に秒間3回以内に制御（0.35秒間隔）
 - **ZIP展開**: 全形式がZIPで返される。一時ディレクトリに展開してからリネーム・移動する
 - **保存期間**: 過去5年分の書類が取得可能

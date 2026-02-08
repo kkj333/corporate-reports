@@ -9,7 +9,7 @@ import pytest
 # テスト用に環境変数を設定
 os.environ["EDINET_API_KEY"] = "test_api_key_12345"
 
-from scripts.edinet_api import (
+from corporate_reports.edinet import (
     search_documents,
     download_document,
     EdinetAPIError,
@@ -20,8 +20,8 @@ from scripts.edinet_api import (
 class TestSearchDocuments:
     """search_documents 関数のテスト"""
 
-    @patch("scripts.edinet_api.requests.get")
-    @patch("scripts.edinet_api.time.sleep")
+    @patch("corporate_reports.edinet.requests.get")
+    @patch("corporate_reports.edinet.time.sleep")
     def test_search_success(self, mock_sleep, mock_get):
         """正常系: 書類検索が成功"""
         # モックレスポンスを設定
@@ -50,8 +50,8 @@ class TestSearchDocuments:
         mock_get.assert_called_once()
         mock_sleep.assert_called_once()
 
-    @patch("scripts.edinet_api.requests.get")
-    @patch("scripts.edinet_api.time.sleep")
+    @patch("corporate_reports.edinet.requests.get")
+    @patch("corporate_reports.edinet.time.sleep")
     def test_search_with_sec_code_filter(self, mock_sleep, mock_get):
         """証券コードでフィルタリング"""
         mock_response = Mock()
@@ -73,8 +73,8 @@ class TestSearchDocuments:
         assert len(results) == 2
         assert all(r["secCode"][:4] == "5819" for r in results)
 
-    @patch("scripts.edinet_api.requests.get")
-    @patch("scripts.edinet_api.time.sleep")
+    @patch("corporate_reports.edinet.requests.get")
+    @patch("corporate_reports.edinet.time.sleep")
     def test_search_with_ordinance_and_form_code(self, mock_sleep, mock_get):
         """府令コード・様式コードでフィルタリング"""
         mock_response = Mock()
@@ -105,7 +105,7 @@ class TestSearchDocuments:
         assert len(results) == 1
         assert results[0]["docID"] == "S100A"
 
-    @patch("scripts.edinet_api.requests.get")
+    @patch("corporate_reports.edinet.requests.get")
     def test_search_api_error(self, mock_get):
         """API エラー時の挙動"""
         mock_response = Mock()
@@ -118,7 +118,7 @@ class TestSearchDocuments:
         with pytest.raises(EdinetAPIError):
             search_documents(date="2025-03-27")
 
-    @patch("scripts.edinet_api.requests.get")
+    @patch("corporate_reports.edinet.requests.get")
     def test_search_network_error(self, mock_get):
         """ネットワークエラー時の挙動"""
         from requests.exceptions import RequestException
@@ -132,8 +132,8 @@ class TestSearchDocuments:
 class TestDownloadDocument:
     """download_document 関数のテスト"""
 
-    @patch("scripts.edinet_api.requests.get")
-    @patch("scripts.edinet_api.time.sleep")
+    @patch("corporate_reports.edinet.requests.get")
+    @patch("corporate_reports.edinet.time.sleep")
     @patch("builtins.open", new_callable=mock_open)
     @patch("pathlib.Path.mkdir")
     def test_download_success(self, mock_mkdir, mock_file, mock_sleep, mock_get):
@@ -155,7 +155,7 @@ class TestDownloadDocument:
         mock_sleep.assert_called_once()
         mock_file.assert_called_once()
 
-    @patch("scripts.edinet_api.requests.get")
+    @patch("corporate_reports.edinet.requests.get")
     def test_download_network_error(self, mock_get):
         """ネットワークエラー時の挙動"""
         from requests.exceptions import RequestException
@@ -176,7 +176,7 @@ class TestCheckApiKey:
         # 環境変数は setUp で設定済みなので、例外が発生しないことを確認
         check_api_key()  # 例外が出なければOK
 
-    @patch("scripts.edinet_api.API_KEY", None)
+    @patch("corporate_reports.edinet.API_KEY", None)
     def test_api_key_missing(self):
         """APIキーが未設定の場合"""
         with pytest.raises(SystemExit):
@@ -186,11 +186,14 @@ class TestCheckApiKey:
 class TestMainCLI:
     """main() 関数（CLI）のテスト"""
 
-    @patch("scripts.edinet_api.search_documents")
-    @patch("sys.argv", ["edinet_api.py", "search", "--date", "2025-03-27"])
+    @patch("corporate_reports.cli.search_documents")
+    @patch(
+        "sys.argv",
+        ["corporate-reports", "edinet", "search", "--date", "2025-03-27"],
+    )
     def test_cli_search_command(self, mock_search):
         """search コマンドの実行"""
-        from scripts.edinet_api import main
+        from corporate_reports.cli import main
 
         mock_search.return_value = [{"docID": "S100XXXX"}]
 
@@ -203,11 +206,12 @@ class TestMainCLI:
             form_code=None,
         )
 
-    @patch("scripts.edinet_api.download_document")
+    @patch("corporate_reports.cli.download_document")
     @patch(
         "sys.argv",
         [
-            "edinet_api.py",
+            "corporate-reports",
+            "edinet",
             "download",
             "--doc-id",
             "S100XXXX",
@@ -219,7 +223,7 @@ class TestMainCLI:
     )
     def test_cli_download_command(self, mock_download):
         """download コマンドの実行"""
-        from scripts.edinet_api import main
+        from corporate_reports.cli import main
 
         mock_download.return_value = "test.zip"
 
@@ -228,11 +232,14 @@ class TestMainCLI:
             doc_id="S100XXXX", doc_type="2", output_path="test.zip"
         )
 
-    @patch("scripts.edinet_api.search_documents")
-    @patch("sys.argv", ["edinet_api.py", "search", "--date", "2025-03-27"])
+    @patch("corporate_reports.cli.search_documents")
+    @patch(
+        "sys.argv",
+        ["corporate-reports", "edinet", "search", "--date", "2025-03-27"],
+    )
     def test_cli_error_handling(self, mock_search):
         """CLIエラーハンドリング"""
-        from scripts.edinet_api import main, EdinetAPIError
+        from corporate_reports.cli import main
 
         mock_search.side_effect = EdinetAPIError("API Error")
 
@@ -241,10 +248,10 @@ class TestMainCLI:
 
         assert exc_info.value.code == 1
 
-    @patch("sys.argv", ["edinet_api.py"])
+    @patch("sys.argv", ["corporate-reports"])
     def test_cli_no_command(self):
         """コマンド未指定時"""
-        from scripts.edinet_api import main
+        from corporate_reports.cli import main
 
         with pytest.raises(SystemExit) as exc_info:
             main()

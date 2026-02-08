@@ -37,7 +37,7 @@ uv sync
 
 ```bash
 # EDINET API が動作するか確認
-uv run python scripts/edinet_api.py search --date $(date +%Y-%m-%d)
+uv run corporate-reports edinet search --date $(date +%Y-%m-%d)
 
 # テストを実行
 uv run pytest tests/ -v
@@ -64,8 +64,9 @@ uv run pytest tests/ -v
 corporate-reports/
 ├── .env                    # APIキー（.gitignore済み）
 ├── .env.example            # APIキーのテンプレート
-├── scripts/
-│   └── edinet_api.py      # EDINET API クライアント
+├── src/corporate_reports/  # Python パッケージ
+│   ├── edinet.py          # EDINET API クライアント
+│   └── cli.py             # CLI エントリポイント
 ├── tests/                  # ユニットテスト
 ├── docs/                   # ドキュメント
 ├── .claude/

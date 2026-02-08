@@ -57,8 +57,8 @@ pip install python-dotenv requests
 ## 5. 動作確認
 
 ```bash
-# Python スクリプト経由で本日の開示書類一覧を取得
-python scripts/edinet_api.py search --date $(date +%Y-%m-%d)
+# CLI で本日の開示書類一覧を取得
+uv run corporate-reports edinet search --date $(date +%Y-%m-%d)
 ```
 
 JSON 形式で書類一覧が返ってくれば成功。
@@ -69,12 +69,12 @@ JSON 形式で書類一覧が返ってくれば成功。
 
 ```bash
 # カナレ電気（5819）の2025年3月27日の開示書類を検索
-python scripts/edinet_api.py search \
+uv run corporate-reports edinet search \
   --date 2025-03-27 \
   --sec-code 5819
 
 # 有価証券報告書に絞り込み
-python scripts/edinet_api.py search \
+uv run corporate-reports edinet search \
   --date 2025-03-27 \
   --sec-code 5819 \
   --ordinance-code 010 \
@@ -85,13 +85,13 @@ python scripts/edinet_api.py search \
 
 ```bash
 # PDF取得
-python scripts/edinet_api.py download \
+uv run corporate-reports edinet download \
   --doc-id S100XXXX \
   --type 2 \
   --output data/report.zip
 
 # CSV取得（構造化財務データ、2024年4月以降）
-python scripts/edinet_api.py download \
+uv run corporate-reports edinet download \
   --doc-id S100XXXX \
   --type 5 \
   --output data/report_csv.zip

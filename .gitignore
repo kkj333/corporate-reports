@@ -38,11 +38,22 @@ Thumbs.db
 *~
 .vscode/
 
-# === Python（スクリプト実行時） ===
+# === Python ===
 __pycache__/
 *.pyc
+*.pyo
 venv/
 .venv/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+*.egg
+*.so
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
 
 # === Jekyll ビルド成果物 ===
 _site/

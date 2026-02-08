@@ -12,12 +12,12 @@ uv run pytest tests/
 uv run pytest tests/ -v
 
 # カバレッジ付き（pytest-cov をインストール後）
-uv run pytest tests/ --cov=scripts --cov-report=html
+uv run pytest tests/ --cov=corporate_reports --cov-report=html
 ```
 
 ## テスト構成
 
-- `test_edinet_api.py` - EDINET API クライアント ([scripts/edinet_api.py](../scripts/edinet_api.py)) のテスト
+- `test_edinet_api.py` - EDINET API クライアント (`corporate_reports.edinet`) のテスト
   - 書類検索機能
   - 書類ダウンロード機能
   - エラーハンドリング
