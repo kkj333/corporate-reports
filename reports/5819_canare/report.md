@@ -1,4 +1,4 @@
-[← カナレ電気トップ](./) ｜ [財務データグラフ](charts.html) ｜ [企業一覧](../)
+[← カナレ電気トップ](./) ｜ [財務データグラフ](charts.html) ｜ [企業一覧](../../)
 
 <style>
 .hl-red { background: #fdecea; color: #c0392b; font-weight: 600; padding: 0.1em 0.4em; border-radius: 3px; }
