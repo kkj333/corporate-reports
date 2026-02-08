@@ -5,6 +5,12 @@ title: 財務データグラフ
 
 <p><a href="./">← トップ</a> ｜ <a href="カナレ電気_企業分析レポート.html">企業分析レポート</a></p>
 
+<div class="chart-legend">
+  <span><span class="dot" style="background:#e74c3c"></span> 割安シグナル・要注目</span>
+  <span><span class="dot" style="background:#f39c12"></span> 改善余地あり</span>
+  <span><span class="dot" style="background:#27ae60"></span> 成長・ポジティブ</span>
+</div>
+
 <style>
   .chart-container {
     max-width: 800px;
@@ -25,6 +31,60 @@ title: 財務データグラフ
     color: #888;
     margin-top: 0.25rem;
   }
+  .chart-container.hl-red {
+    border-left: 5px solid #e74c3c;
+  }
+  .chart-container.hl-green {
+    border-left: 5px solid #27ae60;
+  }
+  .chart-container.hl-amber {
+    border-left: 5px solid #f39c12;
+  }
+  .chart-note.note-red {
+    color: #c0392b;
+    font-weight: 600;
+    background: #fdecea;
+    display: inline-block;
+    padding: 0.2rem 0.8rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+  }
+  .chart-note.note-green {
+    color: #1e8449;
+    font-weight: 600;
+    background: #eafaf1;
+    display: inline-block;
+    padding: 0.2rem 0.8rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+  }
+  .chart-note.note-amber {
+    color: #b7950b;
+    font-weight: 600;
+    background: #fef9e7;
+    display: inline-block;
+    padding: 0.2rem 0.8rem;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+  }
+  .chart-legend {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+  }
+  .chart-legend span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .chart-legend .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    display: inline-block;
+  }
 </style>
 
 <div class="chart-container">
@@ -39,48 +99,50 @@ title: 財務データグラフ
   <p class="chart-note">単位：百万円</p>
 </div>
 
-<div class="chart-container">
+<div class="chart-container hl-amber">
   <h3>四半期 営業利益率の推移</h3>
   <canvas id="quarterlyChart"></canvas>
+  <p class="chart-note note-amber">2Q・4Qに利益率が低下する季節性パターンあり</p>
 </div>
 
-<div class="chart-container">
+<div class="chart-container hl-red">
   <h3>BPS vs 株価の推移</h3>
   <canvas id="bpsChart"></canvas>
-  <p class="chart-note">BPSは右肩上がりだが株価は横ばい → PBR圧縮が進行</p>
+  <p class="chart-note note-red">BPSは右肩上がりだが株価は横ばい → PBR圧縮が進行</p>
 </div>
 
-<div class="chart-container">
+<div class="chart-container hl-red">
   <h3>ネットキャッシュ vs 時価総額</h3>
   <canvas id="netcashChart"></canvas>
-  <p class="chart-note">ネットキャッシュが時価総額を超過 → EV＜0（事業価値をマイナス評価）</p>
+  <p class="chart-note note-red">ネットキャッシュが時価総額を超過 → EV＜0（事業価値をマイナス評価）</p>
 </div>
 
-<div class="chart-container">
+<div class="chart-container hl-green">
   <h3>営業CF・実質FCFの推移</h3>
   <canvas id="cfChart"></canvas>
-  <p class="chart-note">実質FCF＝営業CF−設備投資（資金運用を除く）</p>
+  <p class="chart-note note-green">実質FCF＝営業CF−設備投資（資金運用を除く）</p>
 </div>
 
-<div class="chart-container">
-  <h3>ROEの推移</h3>
+<div class="chart-container hl-amber">
+  <h3>ROE vs 事業ROIC の推移</h3>
   <canvas id="roeChart"></canvas>
-  <p class="chart-note">過剰な現金保有によりROEが低水準に抑えられている</p>
+  <p class="chart-note note-amber">ROEは6%台だが事業ROIC（余剰現金除く）は12〜22%。低ROEの原因は過剰な現金保有</p>
 </div>
 
-<div class="chart-container">
+<div class="chart-container hl-green">
   <h3>海外売上比率の推移</h3>
   <canvas id="overseasChart"></canvas>
-  <p class="chart-note">海外比率50%超で拡大基調。インド・欧州・中東が新たな成長ドライバー</p>
+  <p class="chart-note note-green">海外比率50%超で拡大基調。インド・欧州・中東が新たな成長ドライバー</p>
 </div>
 
-<div class="chart-container">
+<div class="chart-container hl-green">
   <h3>配当の推移</h3>
   <canvas id="dividendChart"></canvas>
-  <p class="chart-note">単位：円</p>
+  <p class="chart-note note-green">増配基調が継続。配当性向は30〜50%で安定</p>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
 <script>
 const colors = {
   blue: 'rgba(54,162,235,0.7)',
@@ -193,6 +255,9 @@ new Chart(document.getElementById('segmentChart'), {
 });
 
 // 4. 四半期営業利益率
+const qData = [15.4, 6.7, 14.5, 14.3, 12.4, 8.7, 13.4, 10.4, 15.2, 12.4, 13.7, 6.9];
+const qPointColors = qData.map((v, i) => (i % 4 === 1 || i % 4 === 3) ? '#e74c3c' : colors.blueBorder);
+const qPointBg = qData.map((v, i) => (i % 4 === 1 || i % 4 === 3) ? '#e74c3c' : colors.blueBorder);
 new Chart(document.getElementById('quarterlyChart'), {
   type: 'line',
   data: {
@@ -203,11 +268,14 @@ new Chart(document.getElementById('quarterlyChart'), {
     ],
     datasets: [{
       label: '営業利益率（%）',
-      data: [15.4, 6.7, 14.5, 14.3, 12.4, 8.7, 13.4, 10.4, 15.2, 12.4, 13.7, 6.9],
+      data: qData,
       borderColor: colors.blueBorder,
       backgroundColor: colors.blue,
       borderWidth: 2,
-      pointRadius: 5,
+      pointRadius: 6,
+      pointBackgroundColor: qPointBg,
+      pointBorderColor: qPointColors,
+      pointBorderWidth: 2,
       tension: 0.3,
       fill: true
     }]
@@ -226,6 +294,25 @@ new Chart(document.getElementById('quarterlyChart'), {
       tooltip: {
         callbacks: {
           label: ctx => ctx.parsed.y + '%'
+        }
+      },
+      annotation: {
+        annotations: {
+          avgLine: {
+            type: 'line',
+            yMin: 12,
+            yMax: 12,
+            borderColor: 'rgba(46,204,113,0.6)',
+            borderWidth: 2,
+            borderDash: [6, 4],
+            label: {
+              display: true,
+              content: '平均≒12%',
+              position: 'start',
+              backgroundColor: 'rgba(46,204,113,0.8)',
+              font: { size: 11 }
+            }
+          }
         }
       }
     }
@@ -275,6 +362,10 @@ new Chart(document.getElementById('bpsChart'), {
 });
 
 // 6. ネットキャッシュ vs 時価総額
+const ncData = [86, 85, 99, 137];
+const mcData = [97, 105, 99, 131];
+const ncBgColors = ncData.map((nc, i) => nc >= mcData[i] ? 'rgba(231,76,60,0.7)' : colors.green);
+const ncBorderColors = ncData.map((nc, i) => nc >= mcData[i] ? 'rgba(231,76,60,1)' : colors.greenBorder);
 new Chart(document.getElementById('netcashChart'), {
   type: 'bar',
   data: {
@@ -282,14 +373,14 @@ new Chart(document.getElementById('netcashChart'), {
     datasets: [
       {
         label: 'ネットキャッシュ（億円）',
-        data: [86, 85, 99, 137],
-        backgroundColor: colors.green,
-        borderColor: colors.greenBorder,
+        data: ncData,
+        backgroundColor: ncBgColors,
+        borderColor: ncBorderColors,
         borderWidth: 1
       },
       {
         label: '時価総額（億円）',
-        data: [97, 105, 99, 131],
+        data: mcData,
         backgroundColor: colors.orange,
         borderColor: 'rgba(255,159,64,1)',
         borderWidth: 1
@@ -342,7 +433,7 @@ new Chart(document.getElementById('cfChart'), {
   }
 });
 
-// 8. ROE推移
+// 8. ROE vs ROIC推移
 new Chart(document.getElementById('roeChart'), {
   type: 'line',
   data: {
@@ -355,6 +446,16 @@ new Chart(document.getElementById('roeChart'), {
         backgroundColor: colors.blue,
         borderWidth: 2,
         pointRadius: 5,
+        tension: 0.3,
+        fill: true
+      },
+      {
+        label: '事業ROIC（%）',
+        data: [12.5, 11.5, 12.2, 13.9, 18.1, 22.4],
+        borderColor: colors.greenBorder,
+        backgroundColor: 'rgba(75,192,192,0.15)',
+        borderWidth: 3,
+        pointRadius: 6,
         tension: 0.3,
         fill: true
       },
@@ -374,15 +475,48 @@ new Chart(document.getElementById('roeChart'), {
     scales: {
       y: {
         beginAtZero: true,
-        max: 12,
-        title: { display: true, text: 'ROE（%）' },
+        max: 25,
+        title: { display: true, text: '%' },
         ticks: { callback: v => v + '%' }
+      }
+    },
+    plugins: {
+      annotation: {
+        annotations: {
+          belowTarget: {
+            type: 'box',
+            yMin: 0,
+            yMax: 8,
+            backgroundColor: 'rgba(231,76,60,0.07)',
+            borderWidth: 0,
+            label: {
+              display: true,
+              content: 'ROE 8%未達ゾーン',
+              position: { x: 'end', y: 'start' },
+              backgroundColor: 'rgba(231,76,60,0.7)',
+              font: { size: 11 }
+            }
+          },
+          gapLabel: {
+            type: 'label',
+            xValue: 4,
+            yValue: 12.5,
+            content: ['← ROEとROICの乖離', '＝余剰現金の影響'],
+            backgroundColor: 'rgba(243,156,18,0.85)',
+            color: '#fff',
+            font: { size: 11 },
+            padding: 6,
+            borderRadius: 4
+          }
+        }
       }
     }
   }
 });
 
 // 9. 海外売上比率推移
+const overseasRatio = [40.6, 44.5, 49.8, 51.9, 51.2, 52.5];
+const overseasPtColors = overseasRatio.map(v => v >= 50 ? '#27ae60' : colors.redBorder);
 new Chart(document.getElementById('overseasChart'), {
   type: 'bar',
   data: {
@@ -406,12 +540,14 @@ new Chart(document.getElementById('overseasChart'), {
       },
       {
         label: '海外比率（%）',
-        data: [40.6, 44.5, 49.8, 51.9, 51.2, 52.5],
+        data: overseasRatio,
         type: 'line',
         borderColor: colors.redBorder,
         backgroundColor: 'transparent',
         borderWidth: 2,
-        pointRadius: 5,
+        pointRadius: 6,
+        pointBackgroundColor: overseasPtColors,
+        pointBorderColor: overseasPtColors,
         tension: 0.3,
         yAxisID: 'y1'
       }
@@ -431,6 +567,28 @@ new Chart(document.getElementById('overseasChart'), {
         title: { display: true, text: '海外比率（%）' },
         ticks: { callback: v => v + '%' },
         grid: { drawOnChartArea: false }
+      }
+    },
+    plugins: {
+      annotation: {
+        annotations: {
+          fiftyLine: {
+            type: 'line',
+            yScaleID: 'y1',
+            yMin: 50,
+            yMax: 50,
+            borderColor: 'rgba(39,174,96,0.6)',
+            borderWidth: 2,
+            borderDash: [6, 4],
+            label: {
+              display: true,
+              content: '50%ライン',
+              position: 'start',
+              backgroundColor: 'rgba(39,174,96,0.8)',
+              font: { size: 11 }
+            }
+          }
+        }
       }
     }
   }
