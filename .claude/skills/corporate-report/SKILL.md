@@ -11,10 +11,12 @@ description: 上場企業の分析レポートとチャートを生成する。�
 
 ### 1. プロジェクト準備
 
-- カレントディレクトリに以下のファイルを作成:
+- `{証券コード}_{企業名英語小文字}/` ディレクトリを作成（例: `5819_canare/`）
+- その中に以下のファイルを作成:
   - `report.md` — 企業分析レポート本体
   - `charts.html` — Chart.jsベースの財務データグラフ
-  - `README.md` — GitHub Pages リンク付き
+  - `README.md` — 企業トップページ（企業一覧への戻りリンク付き）
+- ルートの `README.md` の企業一覧テーブルに新しい企業を追加
 
 ### 2. 情報収集
 
@@ -131,4 +133,23 @@ Chart.js v4 + chartjs-plugin-annotation を使用。推奨グラフ:
 
 - report.md の先頭にJekyll front matterは不要（READMEから.mdリンク、Jekyll側で.html化）
 - charts.htmlにはJekyll front matter `layout: default` を付ける
-- ファイル名は英語にする（URLエンコード問題回避）
+- ファイル名・ディレクトリ名は英語にする（URLエンコード問題回避）
+- ナビリンクに「企業一覧（../）」への戻りリンクを含める
+
+### 8. フォルダ構成
+
+```
+リポジトリルート/
+├── README.md              # 企業一覧（インデックス）
+├── _config.yml            # Jekyll設定
+├── .claude/skills/        # スキルテンプレート
+├── 5819_canare/           # カナレ電気
+│   ├── README.md
+│   ├── report.md
+│   └── charts.html
+├── XXXX_next/             # 次の企業
+│   ├── README.md
+│   ├── report.md
+│   └── charts.html
+└── ...
+```
