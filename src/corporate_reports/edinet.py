@@ -28,11 +28,17 @@ class EdinetAPIError(Exception):
     pass
 
 
-def check_api_key():
-    """APIキーの存在確認"""
+def _get_api_key() -> Optional[str]:
+    """APIキーを取得（テスト時の環境変数変更に対応するため実行時に読む）"""
+    return API_KEY or os.getenv("EDINET_API_KEY")
+
+
+def check_api_key() -> str:
+    """APIキーの存在確認。キーを返す。"""
     import sys
 
-    if not API_KEY:
+    key = _get_api_key()
+    if not key:
         print("ERROR: EDINET_API_KEY が設定されていません", file=sys.stderr)
         print("", file=sys.stderr)
         print("設定方法:", file=sys.stderr)
@@ -45,6 +51,7 @@ def check_api_key():
             "https://api.edinet-fsa.go.jp/api/auth/index.aspx?mode=1", file=sys.stderr
         )
         sys.exit(1)
+    return key
 
 
 def search_documents(
@@ -65,13 +72,13 @@ def search_documents(
     Returns:
         書類情報のリスト
     """
-    check_api_key()
+    api_key = check_api_key()
 
     url = f"{BASE_URL}/documents.json"
     params = {
         "date": date,
         "type": "2",  # メタデータ + 書類一覧
-        "Subscription-Key": API_KEY,
+        "Subscription-Key": api_key,
     }
 
     try:
@@ -123,12 +130,12 @@ def download_document(doc_id: str, doc_type: str, output_path: str) -> str:
     Returns:
         保存先のパス
     """
-    check_api_key()
+    api_key = check_api_key()
 
     url = f"{BASE_URL}/documents/{doc_id}"
     params = {
         "type": doc_type,
-        "Subscription-Key": API_KEY,
+        "Subscription-Key": api_key,
     }
 
     try:

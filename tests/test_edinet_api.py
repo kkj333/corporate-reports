@@ -177,6 +177,7 @@ class TestCheckApiKey:
         check_api_key()  # 例外が出なければOK
 
     @patch("corporate_reports.edinet.API_KEY", None)
+    @patch.dict(os.environ, {}, clear=True)
     def test_api_key_missing(self):
         """APIキーが未設定の場合"""
         with pytest.raises(SystemExit):
