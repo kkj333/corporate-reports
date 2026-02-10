@@ -7,7 +7,9 @@ description: 上場企業の分析レポートとチャートを生成する。�
 
 証券コード `$0`、企業名 `$1` の企業分析レポートを作成する。
 
-**実例**: `reports/5819_canare/report.md` と `reports/5819_canare/charts.html` を参照すること。構成・トーン・ハイライトの使い方はこの実例に合わせる。
+**実例**: `reports/5819_canare/report.md` を参照すること。構成・トーンはこの実例に合わせる。
+
+**企業固有メモ**: `reports/{code}_{name}/notes.md` があれば読み込み、企業固有の論点・強調点・リスクをレポートに反映する。
 
 ---
 
@@ -19,7 +21,6 @@ description: 上場企業の分析レポートとチャートを生成する。�
 |---|---|
 | `README.md` | 企業トップページ。企業一覧への戻りリンク付き |
 | `report.md` | 分析レポート本体 |
-| `charts.html` | Chart.js グラフページ。Jekyll front matter `layout: default` 付き |
 
 作成後、ルート `README.md` の企業一覧テーブルに行を追加する。
 
@@ -49,24 +50,10 @@ description: 上場企業の分析レポートとチャートを生成する。�
 
 ## 3. レポート構成（report.md）
 
-先頭にナビリンクとCSSを置く（実例: `reports/5819_canare/report.md` を参照）:
+先頭にナビリンクを置く（実例: `reports/5819_canare/report.md` を参照）:
 
-ナビリンク形式: `[← 企業名トップ](./), [財務データグラフ](charts.html), [企業一覧](../../)` の3つを横並び
+ナビリンク形式: `[← 企業名トップ](./) ｜ [企業一覧](../../)` を横並び
 
-```html
-
-<style>
-.hl-red { background: #fdecea; color: #c0392b; font-weight: 600; padding: 0.1em 0.4em; border-radius: 3px; }
-.hl-green { background: #eafaf1; color: #1e8449; font-weight: 600; padding: 0.1em 0.4em; border-radius: 3px; }
-.hl-amber { background: #fef9e7; color: #b7950b; font-weight: 600; padding: 0.1em 0.4em; border-radius: 3px; }
-</style>
-
-<div class="hl-legend">
-<span><span class="dot" style="background:#e74c3c"></span> 割安シグナル・要注目</span>
-<span><span class="dot" style="background:#f39c12"></span> 改善余地あり</span>
-<span><span class="dot" style="background:#27ae60"></span> ポジティブ</span>
-</div>
-```
 
 ### セクション構成
 
@@ -149,63 +136,14 @@ NOPAT = 営業利益 ×（1 - 実効税率）
   - カタリスト候補があれば、期待と不確実性の両面を書く
 - **ブルケース**: 希望ではなく実績データで裏付ける。「いつか変わる」だけでは不十分
 
-### カラーハイライトの基準
-
-テーブル内の数値に `<span class="hl-red">` 等を使う:
-
-| 色 | 使いどころ | 例 |
-|---|---|---|
-| 赤 `hl-red` | 割安シグナル、要注目リスク | PBR<1、EV<0、急落した利益率、評価損急増 |
-| 黄 `hl-amber` | 改善余地、注意 | ROE低水準、予想減益、季節性パターン |
-| 緑 `hl-green` | ポジティブ | 成長セグメント、高い評価（A/B）、財務健全性 |
-
-- 付けすぎない。1テーブルに2〜3箇所が目安
 - 重要リスクは総括セクションにも言及する（リスクセクションだけに埋もれさせない）
 - 推計値には必ず `*` を付けて注記する
 
 ---
 
-## 5. チャート（charts.html）
-
-Chart.js v4 + chartjs-plugin-annotation。Jekyll front matter 必須:
-
-```yaml
----
-layout: default
-title: {企業名} - 財務データグラフ
----
-```
-
-ナビリンク:
-```html
-<p><a href="./">← {企業名}トップ</a> ｜ <a href="report.html">企業分析レポート</a> ｜ <a href="../../">企業一覧</a></p>
-```
-
-### 推奨グラフ（企業に応じて取捨選択）
-
-1. **売上高・利益の推移** — 棒（売上）+ 折れ線（経常利益・純利益）の複合
-2. **セグメント別 売上高・利益** — 地域別 or 事業別
-3. **四半期 営業利益率** — 季節性があればポイント色で強調、平均ライン注釈
-4. **BPS vs 株価** — PBR圧縮の可視化
-5. **ネットキャッシュ vs 時価総額** — NC > 時価総額の年度を赤色に
-6. **営業CF・実質FCF** — 実質FCF = 営業CF - 設備投資
-7. **ROE vs 事業ROIC** — 8%参照ライン、乖離を示すラベル注釈
-8. **海外売上比率**（該当する場合）— 50%等の節目ライン
-9. **配当の推移** — 配当性向を折れ線で重ねる
-
-### グラフの装飾ルール
-
-- チャートコンテナに左ボーダー色: `hl-red` / `hl-amber` / `hl-green`
-- annotation プラグインで参考ライン（8%、50%等）やゾーン（未達ゾーン）
-- 注目データポイントのポイント色を変更（低い値を赤、高い値を緑）
-- 注釈テキスト `.chart-note` にも色付きクラスを付与
-- ページ上部にカラー凡例を配置
-
----
-
-## 6. ファイル名・リンク規約
+## 5. ファイル名・リンク規約
 
 - ディレクトリ名・ファイル名は**英語のみ**（日本語はURLエンコードで問題になる）
 - ディレクトリ命名: `reports/{証券コード}_{企業名英語小文字}`（例: `reports/5819_canare`, `reports/7203_toyota`）
-- report.md 内のナビ: `[← {企業名}トップ](./) ｜ [財務データグラフ](charts.html) ｜ [企業一覧](../../)`
-- charts.html 内のナビ: `<a href="./">← {企業名}トップ</a> ｜ <a href="report.html">レポート</a> ｜ <a href="../../">企業一覧</a>`
+- report.md 内のナビ: `[← {企業名}トップ](./) ｜ [企業一覧](../../)`
+- HTML化・チャート追加は `/build-report` スキルが担当。このスキルでは report.md の生成のみ行う
