@@ -67,9 +67,7 @@ class ValuationInput:
             shares = shares_raw
 
         # 大きすぎる値は千円→百万円変換
-        def normalize_millions(val: float | None) -> float | None:
-            if val is None:
-                return None
+        def normalize_millions(val: float) -> float:
             if abs(val) > 1_000_000:
                 return val / 1000
             return val

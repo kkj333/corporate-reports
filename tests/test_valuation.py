@@ -123,7 +123,7 @@ class TestValuationInput:
         """frozenなので変更不可"""
         inp = ValuationInput.from_dict(JECOS_INPUT)
         with pytest.raises(AttributeError):
-            inp.stock_price = 2000
+            inp.stock_price = 2000  # type: ignore[read-only-property]
 
 
 class TestMarketCap:
