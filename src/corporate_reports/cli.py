@@ -55,6 +55,10 @@ def main():
     )
     download_parser.add_argument("--output", required=True, help="保存先パス")
 
+    # valuation コマンド
+    valuation_parser = subparsers.add_parser("valuation", help="バリュエーション計算")
+    valuation_parser.add_argument("input_file", help="入力JSONファイルのパス")
+
     # build-report コマンド
     build_parser = subparsers.add_parser(
         "build-report", help="report.md から report.html を生成"
@@ -74,7 +78,30 @@ def main():
     args = parser.parse_args()
 
     try:
-        if args.command == "build-report":
+        if args.command == "valuation":
+            from pathlib import Path
+
+            from corporate_reports.valuation import (
+                ValuationError,
+                calculate_valuation,
+                format_output,
+                load_input,
+            )
+
+            try:
+                inp = load_input(Path(args.input_file))
+                result = calculate_valuation(inp)
+                print(format_output(result))
+            except ValuationError as e:
+                print(
+                    json.dumps(
+                        {"status": "error", "message": str(e)}, ensure_ascii=False
+                    ),
+                    file=sys.stderr,
+                )
+                sys.exit(1)
+
+        elif args.command == "build-report":
             from pathlib import Path
 
             from corporate_reports.build_report import build_report
